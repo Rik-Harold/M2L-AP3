@@ -5,7 +5,7 @@
     <!-- Formulaire création -->
     <div v-if="$route.params.idFiche == 0" class="container mt-5">
       <!-- Titre du formulaire -->
-      <h1 class="h1 text-center">Formulaire de fiche de frais</h1>
+      <h1 class="h1 text-center">Création d'une fiche de frais</h1>
       <!-- Conteneur des données du formulaire -->
       <div class="container-fluid">
         <div class="row">
@@ -60,7 +60,7 @@
     <!-- Formulaire mise à jour -->
     <div v-else-if="$route.params.idFiche > 0" class="container mt-5">
       <!-- Titre du formulaire -->
-      <h1 class="h1 text-center">Formulaire de fiche de frais</h1>
+      <h1 class="h1 text-center">Mise à jour de la fiche de frais</h1>
       <!-- Conteneur des données du formulaire -->
       <div class="container-fluid">
         <div class="row">
@@ -118,7 +118,7 @@
 <script>
 // Importation des vues
 import Header from '@/components/Header.vue'
-import { selectMotifs, addFicheFrais, updateFicheFrais } from '../../services/userService.js'
+import { selectMotifs, addFicheFrais, updateFicheFrais, selectFicheFrais } from '../../services/userService.js'
 // Traitement du script
 export default {
   name: 'Fichefrais',
@@ -129,7 +129,9 @@ export default {
     return {
       id: null,
       dateFrais: '',
+      dateFicheFrais: '',
       idMotif: null,
+      libelleMotif: '',
       trajet: '',
       km: 0,
       nbKm: 1,
@@ -154,11 +156,42 @@ export default {
           this.motifs = data.motif
         }
       })
+    // Vérification de la présence de paramètre valide
+    if (this.$route.params.idFiche && this.$route.params.idFiche > 0) {
+      // Récupération de l'id
+      const id = parseInt(this.$route.params.idFiche)
+      // Fonction de récupération des données de l'utilisateur
+      selectFicheFrais(id, this.$store.state.adherentFicheFrais)
+        .then(res => res.json())
+        .then(data => {
+          // Vérification de la présence
+          if (data.statut !== 'indisponible') {
+            // Récupération et stockage des données de l'utilisateur
+            this.id = id
+            this.dateFrais = this.formatDate(data.fiche[0].date_ligne_frais)
+            this.idMotif = data.fiche[0].id_motif
+            this.trajet = data.fiche[0].trajet
+            this.km = data.fiche[0].km
+            this.nbKm = data.fiche[0].km_valide
+            this.peage = data.fiche[0].cout_peage
+            this.nbPeage = data.fiche[0].peage_valide
+            this.peageJustificatif = data.fiche[0].peage_justificatif
+            this.repas = data.fiche[0].cout_repas
+            this.nbRepas = data.fiche[0].repas_valide
+            this.hebergement = data.fiche[0].cout_hebergement
+            this.nbHebergement = data.fiche[0].hebergement_valide
+            this.hebergementJustificatif = data.fiche[0].hebergemenT_justificatif
+          } else {
+            // Notification de l'absence d'actualisation
+            alert('Aucun utilisateur disponible !')
+          }
+        })
+    }
   },
   methods: {
     sauvegarde: (instance) => {
       // Requête de création
-      addFicheFrais(instance.trajet, instance.dateFrais, instance.km, instance.nbKm, instance.peage, instance.nbPeage, instance.peageJustificatif, instance.repas, instance.nbRepas, instance.hebergement, instance.nbHebergement, instance.hebergementJustificatif, instance.idMotif, instance.$store.state.idUser)
+      addFicheFrais(instance.trajet, instance.dateFrais, instance.km, instance.nbKm, instance.peage, instance.nbPeage, instance.peageJustificatif, instance.repas, instance.nbRepas, instance.hebergement, instance.nbHebergement, instance.hebergementJustificatif, instance.idMotif, instance.$store.state.adherentFicheFrais)
         .then(res => res.json())
         .then(data => {
           // Vérification de la mise à jour
@@ -174,7 +207,7 @@ export default {
         })
     },
     miseAJour: (instance) => {
-      updateFicheFrais(instance.id, instance.trajet, instance.dateFrais, instance.km, instance.nbKm, instance.peage, instance.nbPeage, instance.peageJustificatif, instance.repas, instance.nbRepas, instance.hebergement, instance.nbHebergement, instance.hebergementJustificatif, instance.idMotif, instance.$store.state.idUser)
+      updateFicheFrais(instance.id, instance.trajet, instance.dateFrais, instance.km, instance.nbKm, instance.peage, instance.nbPeage, instance.peageJustificatif, instance.repas, instance.nbRepas, instance.hebergement, instance.nbHebergement, instance.hebergementJustificatif, instance.idMotif, instance.$store.state.adherentFicheFrais)
         .then(res => res.json())
         .then(data => {
           // Vérification de la mise à jour
@@ -188,12 +221,22 @@ export default {
             alert('Erreur lors de la mise à jour !')
           }
         })
-    }
-  },
-  props: {
-    getId: {
-      type: Number,
-      default: 2
+    },
+    formatDate: (dateLigneFrais) => {
+      // Récupération de la date de la ligne de frais
+      const dateObject = new Date(dateLigneFrais)
+      let jour = dateObject.getDate()
+      let mois = dateObject.getMonth() + 1
+      if (dateObject.getDate() < 10) {
+        jour = '0' + jour
+      }
+      if (dateObject.getMonth() < 10) {
+        mois = '0' + mois
+      }
+      // Formatage
+      const formatDateFull = dateObject.getFullYear() + '-' + mois + '-' + jour
+      // Mise à disposition du nouveau format de la date
+      return formatDateFull
     }
   }
 }

@@ -105,7 +105,7 @@ export default {
       switch (instance.filtre) {
         case 'adherent':
           // Récupération des Adhérents
-          // console.log(instance.$store.state.allUser)
+          console.log(instance.allUsers[4])
           return instance.allUsers.filter(utilisateur => {
             return utilisateur.statut === 'adherent'
           })

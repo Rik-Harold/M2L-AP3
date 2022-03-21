@@ -240,6 +240,8 @@ export default {
             // Détection du statut du connecté
             switch (data.statut) {
               case 'adherent':
+                // Initialisation de l'id de ladhérent pour ses fiches de frais
+                instance.$store.commit('setFicheFraisIdAdherent', data.adherentIdFicheFrais)
                 // Redirection vers l'espace membre adhérent
                 instance.$router.push({
                   name: 'Bordereau',

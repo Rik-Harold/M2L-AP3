@@ -4,6 +4,7 @@ export default createStore({
   state: {
     idUser: 0,
     adherentId: 0,
+    adherentFicheFrais: 0,
     statut: '',
     allUser: [],
     mesNotesDeFrais: [
@@ -28,6 +29,7 @@ export default createStore({
     ]
   },
   mutations: {
+    // RECUPERATION DES DONNES GLOBALES DE L'UTILISATEUR CONNECTE
     setDataUserConnect (state, infoUser) {
       // Initialisation de l'id de l'utilisateur connecté
       state.idUser = infoUser.id
@@ -38,10 +40,17 @@ export default createStore({
         state.adherentId = infoUser.id
       }
     },
+    // MODIFICATION DE L'IDENTIFIANT DU BORDEREAU
     setBordereauIdAdherent (state, id) {
       // Initialisation de l'id de l'utilisateur connecté
       state.adherentId = id
     },
+    // MODIFICATION DE L'IDENTIFIANT DU BORDEREAU
+    setFicheFraisIdAdherent (state, id) {
+      // Initialisation de l'id de l'adhérent connecté
+      state.adherentFicheFrais = id
+    },
+    // MODIFICATION DE TOUTES LES DONNEES
     setAllUserData (state, data) {
       // Récupération des données
       state.allUser = data
@@ -52,9 +61,11 @@ export default createStore({
   modules: {
   },
   getters: {
-    getFichesFrais: state => {
-      return state.mesNotesDeFrais
+    // RECUPERATION DE L'IDENTIFIANT DE L'ADHERENT
+    getAdherentFiche: state => {
+      return state.adherentFicheFrais
     },
+    // RECUPERATION DE L'IDENTIFIANT DE L'UTILISATEUR
     getStatut: state => {
       return state.statut
     },

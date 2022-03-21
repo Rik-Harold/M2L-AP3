@@ -59,8 +59,10 @@
               {{ ficheDeFrais.coutTrajet }}
               <span v-if="ficheDeFrais.coutTrajet != '-'"> &euro;</span>
             </td>
-            <td v-if="ficheDeFrais.coutPeage != 0" >{{ ficheDeFrais.coutPeage }} &euro;</td>
-            <td v-else>-</td>
+            <td>
+              {{ ficheDeFrais.coutPeage }}
+              <span v-if="ficheDeFrais.coutPeage != '-'"> &euro;</span>
+            </td>
             <td>
               {{ ficheDeFrais.coutRepas }}
               <span v-if="ficheDeFrais.coutRepas != '-'"> &euro;</span>
@@ -100,8 +102,15 @@
       <div style="width:100%;padding: 20px 30px;font-style:italic;margin-left: 25%;margin-top: 10px;margin-bottom: 30px;">
         <p>Signature du bénévole<span style="background-color:#CCFFCC;margin:0px 30px;padding:30px 150px">[signé]</span></p>
       </div>
-      <!-- Section réservée au trésorier -->
-      <div style="border: 1px solid black;background-color:#FF8BD8;width: 55%;margin-bottom: 50px;">
+      <!-- Section réservée au trésorier modifiable -->
+      <div v-if="$store.state.statut == 'tresorier'" style="border: 1px solid black;background-color:#FF8BD8;width: 55%;margin-bottom: 50px;">
+        <p style="text-align: center;font-weight: bold;">Partie réservée à l'association</p>
+        <p style="margin:15px 0px;">N° d'ordre du Reçu :<span id="num_ordre" style="margin-left: 170px;"></span></p>
+        <p style="margin:15px 0px;">Remis le :<input style="width:200px;text-align: center;border: none; border-bottom: dotted black 1px;margin-left: 150px;background-color:#FF8BD8;" type="text" :value="new Date().toLocaleDateString()"/></p>
+        <p style="margin-top:15px;margin-bottom: 35px;">Signature du Trésorier : <input style="width:300px;text-align: center;border: none; border-bottom: dotted black 1px;margin-left: 50px;background-color:#FF8BD8;" type="text" placeholder="[Saisir votre nom complet ici]"/></p>
+      </div>
+      <!-- Section réservée au trésorier non-modifiable -->
+      <div v-else style="border: 1px solid black;background-color:#FF8BD8;width: 55%;margin-bottom: 50px;">
         <p style="text-align: center;font-weight: bold;">Partie réservée à l'association</p>
         <p style="margin:15px 0px;">N° d'ordre du Reçu :<span id="num_ordre" style="margin-left: 80px;"></span></p>
         <p style="margin:15px 0px;">Remis le :</p>
@@ -130,7 +139,7 @@
 <script>
 /* eslint new-cap: ["error", { "newIsCap": false }] */
 // Importation des fonctions de traitement
-import { selectAllFicheFrais, selectDataAdherent } from '../../services/userService.js'
+import { selectAllFicheFrais, selectDataAdherent, selectMotifs } from '../../services/userService.js'
 import jsPDF from 'jspdf'
 export default {
   name: 'ModelBordereau',
@@ -146,12 +155,22 @@ export default {
       cp: '',
       ville: '',
       licence: 0,
-      montantTotal: 0
+      montantTotal: 0,
+      motifs: null
     }
   },
   beforeMount () {
+    // Fonction de récupération des motifs de fiches de frais
+    selectMotifs()
+      .then(res => res.json())
+      .then(data => {
+        if (data.statut === 'disponible') {
+          // Récupération et stockage des motifs
+          this.motifs = data.motif
+        }
+      })
     // Fonction de récupération et de traitemennt des fiches de frais de l'adhérent
-    selectAllFicheFrais(this.$store.state.idUser, 2022)
+    selectAllFicheFrais(this.$store.state.adherentFicheFrais, 2022)
       .then(res => res.json())
       .then(data => {
         // Récupération et stockage des fiches de frais
@@ -170,7 +189,8 @@ export default {
     // Formatage de la date
     formatDate: (instance, dateLigneFrais) => {
       // Récupération de la date de la ligne de frais
-      const dateObject = new Date(dateLigneFrais)
+      const newDate = dateLigneFrais.substr(0, 10)
+      const dateObject = new Date(newDate)
       let jour = dateObject.getDate()
       let mois = dateObject.getMonth() + 1
       if (dateObject.getDate() < 10) {
@@ -187,11 +207,9 @@ export default {
     // Récupération des données de l'adhérent
     recupData: (instance) => {
       // Fonction de récupération des données de l'adhérent
-      console.log(instance.$store.state.adherentId)
       selectDataAdherent(instance.$store.state.adherentId)
         .then(res => res.json())
         .then(data => {
-          console.log(data.fiche[0])
           // Récupération et initialisation des données de l'adhérent
           instance.id = data.fiche[0].id_demandeur
           instance.nom = data.fiche[0].nom
@@ -226,10 +244,10 @@ export default {
       if (nb === 0) {
         return ('-')
       } else {
-        return parseInt(nb * cout)
+        return (nb * cout)
       }
     },
-    // Formatager du bordereau
+    // Formatage du bordereau
     bordereauFormate: (instance) => {
       // Variables de stockage
       let bordereau = null
@@ -241,7 +259,9 @@ export default {
         // Formatage de la date de frais
         const dateFrais = instance.formatDate(instance, ficheFrais.date_ligne_frais)
         // Kilométrage
-        const km = parseInt(ficheFrais.km * ficheFrais.km_valide)
+        const km = ficheFrais.km * ficheFrais.km_valide
+        const trajetCout = parseInt(km * 0.28)
+        totalFraisFiche += trajetCout
         // Vérification et formatage des frais facultatifs
         let peage = null
         if (ficheFrais.peage_valide !== 0) {
@@ -264,14 +284,21 @@ export default {
         } else {
           hebergemennt = '-'
         }
+        // Détection du motif
+        let motifFrais = ''
+        instance.motifs.forEach(motifData => {
+          if (motifData.id_motif === ficheFrais.id_motif) {
+            motifFrais = motifData.libelle
+          }
+        })
         // Formatage de la fiche de frai du bordereau
         bordereau.push({
           dateFicheFrais: dateFrais,
-          motif: 'mystère',
+          motif: motifFrais,
           trajet: ficheFrais.trajet,
           kmParcouru: km,
-          coutTrajet: peage,
-          coutPeage: ficheFrais.cout_peage,
+          coutTrajet: trajetCout,
+          coutPeage: peage,
           coutRepas: repas,
           coutHebergement: hebergemennt,
           total: totalFraisFiche

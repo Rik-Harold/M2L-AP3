@@ -74,7 +74,7 @@
               <div class="form-group mb-3">
                 <label class="form-label" id="cp">Statut :</label>
                 <select v-if="statut == 'demandeur' || statut == 'adherent'" name="statut" class="form-control" v-model="statut">
-                  <option value="adherent">Demandeur</option>
+                  <option value="demandeur">Demandeur</option>
                   <option value="adherent">Adhérent</option>
                 </select>
                 <select v-else name="statut" class="form-control" v-model="statut">

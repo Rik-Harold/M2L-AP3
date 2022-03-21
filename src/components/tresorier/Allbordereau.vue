@@ -19,23 +19,23 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(bordereau, index) in bordereau" :key="index" >
+          <tr v-for="(bordereau, index) in adherentsFormat(this)" :key="index" >
             <td>{{ index + 1 }}</td>
-            <td>{{ bordereau.nom + ' ' + bordereau.prenom }}</td>
+            <td>{{ bordereau.name }}</td>
             <td v-if="bordereau.src_bordereau != ''" @click="modifAdherentId(this, bordereau.id)" class="voirBordereau" >
               Voir le bordereau
             </td>
             <td v-else class="pasDeBordereau">Non disponible</td>
             <!-- Vérification du bordereau en cas d'absence du bordereau -->
             <td v-if="bordereau.src_bordereau == ''">
-              <button @click="modifAdherentId(this, bordereau.id)" class="ms-1 btn btn-secondary">En attente</button>
+              <button @click="modifAdherentId(this, bordereau.adherent, bordereau.id)" class="ms-1 btn btn-secondary">En attente</button>
             </td>
             <!-- Document CERFA -->
-            <td v-else-if="bordereau.src_bordereau != '' && bordereau.bordereauValide">
+            <td v-else-if="bordereau.src_bordereau != '' && bordereau.bordereauValide == 1">
               <button class="ms-1 btn btn-success">Document CERFA</button>
             </td>
             <!-- Validation du bordereau -->
-            <td v-else-if="bordereau.src_bordereau != '' && !bordereau.bordereauValide">
+            <td v-else-if="bordereau.src_bordereau != '' && bordereau.bordereauValide == 0">
               <button class="ms-1 btn btn-primary" @click="documentCerfa(this, bordereau.id)" >Validation</button>
             </td>
           </tr>
@@ -48,7 +48,7 @@
 <script>
 // Importation de la navbarre
 import Header from '@/components/Header.vue'
-import { selectAllBordereau } from '../../services/userService.js'
+import { selectAllBordereau, selectAllAdherentBordereau } from '../../services/userService.js'
 // Traitements
 export default {
   name: 'Allbordereau',
@@ -59,32 +59,29 @@ export default {
     return {
       annee: 2022,
       bordereaux: [],
+      adherents: [],
       bordereau: [
         {
           id: 15,
-          nom: 'Jean',
-          prenom: 'Pierre',
+          name: 'Jean Pierre',
           src_bordereau: 'bordereau',
           bordereauValide: false
         },
         {
           id: 16,
-          nom: 'Jean',
-          prenom: 'Marc',
+          name: 'Jean Marc',
           src_bordereau: '',
           bordereauValide: false
         },
         {
           id: 20,
-          nom: 'Mr',
-          prenom: 'Inconnu',
+          name: 'Mr Inconnu',
           src_bordereau: 'bordereau',
           bordereauValide: true
         },
         {
           id: 21,
-          nom: 'Madame',
-          prenom: 'X',
+          name: 'Madame X',
           src_bordereau: '',
           bordereauValide: false
         }
@@ -99,19 +96,58 @@ export default {
         // Récupération et stockage des fiches de frais
         this.bordereaux = data
       })
+    // Fonction de récupération des adhérents
+    selectAllAdherentBordereau()
+      .then(res => res.json())
+      .then(data => {
+        // Récupération et stockage des adhérents
+        this.adherents = data
+      })
   },
   methods: {
-    modifAdherentId: (instance, id) => {
-      // Modification de l'utilisateur du bordereau
-      instance.$store.commit('setBordereauIdAdherent', id)
-      // Redirection vers le modèle du bordereau
+    modifAdherentId: (instance, idAdherent, idFicheFrais) => {
+      // Initialisation des identifiants de l'adhérent de ladhérent
+      instance.$store.commit('setBordereauIdAdherent', idAdherent)
+      instance.$store.commit('setFicheFraisIdAdherent', idFicheFrais)
+      // Redirection vers le bordereau de l'utilisateur
       instance.$router.push({ name: 'ModelBordereau' })
     },
+    // Redirection vers le document CERFA
     documentCerfa: (instance, id) => {
       // Modification de l'utilisateur du bordereau
       instance.$store.commit('setBordereauIdAdherent', id)
       // Redirection vers le modèle de documentation cerfa
       instance.$router.push({ name: 'DocumentCerfa' })
+    },
+    // Formatage de la liste des adhérents et des bordereaux
+    adherentsFormat: (instance) => {
+      // Création du tableau formaté d'adhérents
+      let adherentsBordereaux = null
+      adherentsBordereaux = []
+      // Parcours de la ligne des adhérents
+      instance.adherents.forEach(adherent => {
+        const id = adherent.id_demandeur
+        // Vérification de la disponibilité du bordereau
+        let srcBordereau = ''
+        let valide = null
+        instance.bordereaux.forEach(bordereau => {
+          if (bordereau.adherent_id === id) {
+            // Récupération de la valeur de disponibilité des bordereaux
+            srcBordereau = bordereau.src_bordereau
+            valide = bordereau.valide
+          }
+        })
+        // Initialisation des données de l'adhérent
+        adherentsBordereaux.push({
+          id: id,
+          name: adherent.nom + ' ' + adherent.prenom,
+          src_bordereau: srcBordereau,
+          bordereauValide: valide,
+          adherent: adherent.id_utilisateur
+        })
+      })
+      // Mise à disposition du bordereau formaté
+      return adherentsBordereaux
     }
   }
 }
@@ -123,7 +159,7 @@ export default {
   min-width: 716px;
 }
 .pasDeBordereau {
-  color: #ff0000;
+  color: #ff0000 !important;
 }
 .voirBordereau:hover {
   background: rgb(102, 207, 76);

@@ -86,6 +86,14 @@ async function selectDataAdherent (idAdherent) {
   return await response
 }
 
+// Appel de l'API au serveur pour la récupération des données adhérents
+async function selectAllAdherentBordereau () {
+  // Requête vers l'api et récupération de la réponse
+  const response = await fetch('/api/select/adherents')
+  // Réponse de l'api à la vue
+  return await response
+}
+
 /**
  * REQUETES FICHE DE FRAIS
 */
@@ -133,16 +141,16 @@ async function addFicheFrais (ltrajet, ldateLigneFrais, lkm, lkmValide, lcoutPea
   return await response
 }
 
-// Appel de l'API au serveur pour la supression d'une fiche de frais'
-async function deleteFicheFrais (id, idAdherent) {
+// Appel de l'API au serveur pour la supression d'une fiche de frais
+async function deleteFicheFrais (id) {
   // Requête vers l'api et récupération de la réponse
-  const response = await fetch(`/api/delete/fiche-de-frais/${idAdherent}/${id}`)
+  const response = await fetch(`/api/delete/fiche-de-frais/${id}`)
   // Réponse de l'api à la vue
   return await response
 }
 
 // Appel de l'API au serveur pour la mise à jour d'une fiche de frais
-async function updateFicheFrais (lid, ltrajet, ldateLigneFrais, lkm, lkmValide, lcoutPeage, lvalidePeage, lpeageValide, lpeageJustificatif, lcoutRepas, lrepasValide, lcoutHebergement, lhebergementValide, lhebergementJustificatif, lidMotif, lidAdherent) {
+async function updateFicheFrais (lid, ltrajet, ldateLigneFrais, lkm, lkmValide, lcoutPeage, lvalidePeage, lpeageJustificatif, lcoutRepas, lrepasValide, lcoutHebergement, lhebergementValide, lhebergementJustificatif, lidMotif, lidAdherent) {
   // Requête vers l'api et récupération de la réponse
   const response = await fetch('/api/update/fiche-de-frais', {
     method: 'POST',
@@ -268,5 +276,6 @@ module.exports = {
   updateBordereau,
   selectMotifs,
   selectDataAdherent,
-  sendDocumentCerfa
+  sendDocumentCerfa,
+  selectAllAdherentBordereau
 }

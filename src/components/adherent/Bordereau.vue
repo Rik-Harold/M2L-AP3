@@ -1,7 +1,6 @@
 <template>
   <div id="bordereau" class="w-100">
     <!-- Barre de navigation adhérent -->
-    <!-- <Header :idAdhrent="$route.params.idAdherent" /> -->
     <Header :idAdhrent="$store.state.idUser" />
 
     <!-- Contenu de la page -->
@@ -40,7 +39,7 @@
                 <!-- Modification d'une fiche de frais -->
                 <router-link class="btn btn-secondary" :to="{ name: 'Fichefrais', params: { idFiche: noteFrais.id_ligne_frais } }">Modifier</router-link>
                 <!-- Suppression d'une fiche de frais -->
-                <button class="ms-1 btn btn-danger" @click="deleteFiche(this, noteFrais.id_ligne_frais, idUser)">Supprimer</button>
+                <button class="ms-1 btn btn-danger" @click="deleteFiche(this, noteFrais.id_ligne_frais)">Supprimer</button>
               </td>
             </tr>
           </tbody>
@@ -67,18 +66,19 @@ export default {
   data () {
     return {
       idUser: 0,
-      bordereau: null,
-      mois: ['jan', 'fev', 'mar', 'avr', 'mai', 'jun', 'juil', 'aout', 'sep', 'oct', 'nov', 'dec']
+      idAdherentFiche: 0,
+      bordereau: null
     }
   },
   beforeMount () {
     // Fonction de récupération du bordereau
-    selectAllFicheFrais(this.$store.state.idUser, 2022)
+    selectAllFicheFrais(this.$store.state.adherentFicheFrais, 2022)
       .then(res => res.json())
       .then(data => {
         // Récupération et stockage des fiches de frais
         this.bordereau = data
       })
+    // Sauvegarde de l'id de l'adhérent
     this.idUser = this.$store.state.idUser
   },
   methods: {
@@ -87,18 +87,18 @@ export default {
     },
     deleteFiche: (instance, id, userId) => {
       // Fonction de récupération des ligues disponibles
-      deleteFicheFrais(id, userId)
+      deleteFicheFrais(id)
         .then(res => res.json())
         .then(data => {
           console.log('Supression')
           // Mise à jour des fiches
-          instance.miseAJour(instance, userId)
+          instance.miseAJour(instance)
           // Notification de la supression
           alert('Fiche de l\'id ' + id + ' supprimée !')
         })
     },
-    miseAJour: (instance, id) => {
-      selectAllFicheFrais(id, 2022)
+    miseAJour: (instance) => {
+      selectAllFicheFrais(instance.$store.state.adherentFicheFrais, 2022)
         .then(res => res.json())
         .then(data => {
           console.log('Actualisation')
@@ -107,8 +107,19 @@ export default {
         })
     },
     formatDate: (instance, dateLigneFrais) => {
+      // Récupération de la date de la ligne de frais
       const dateObject = new Date(dateLigneFrais)
-      const formatDateFull = dateObject.getDate() + ' ' + instance.mois[dateObject.getMonth()] + ' ' + dateObject.getFullYear()
+      let jour = dateObject.getDate()
+      let mois = dateObject.getMonth() + 1
+      if (dateObject.getDate() < 10) {
+        jour = '0' + jour
+      }
+      if (dateObject.getMonth() < 10) {
+        mois = '0' + mois
+      }
+      // Formatage
+      const formatDateFull = jour + '/' + mois + '/' + dateObject.getFullYear()
+      // Mise à disposition du nouveau format de la date
       return formatDateFull
     }
   }
