@@ -7,7 +7,7 @@
       <!-- Titre du formulaire -->
       <h1 class="h1 text-center">Création d'une fiche de frais</h1>
       <!-- Conteneur des données du formulaire -->
-      <div class="container-fluid">
+      <div class="container mb-5">
         <div class="row">
           <div class="col-sm-10 offset-sm-1 col-md-6 offset-md-3">
             <div class="formulaire">
@@ -62,7 +62,7 @@
       <!-- Titre du formulaire -->
       <h1 class="h1 text-center">Mise à jour de la fiche de frais</h1>
       <!-- Conteneur des données du formulaire -->
-      <div class="container-fluid">
+      <div class="container  mb-5">
         <div class="row">
           <div class="col-sm-10 offset-sm-1 col-md-6 offset-md-3">
             <div class="formulaire">

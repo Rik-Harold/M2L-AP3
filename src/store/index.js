@@ -5,28 +5,9 @@ export default createStore({
     idUser: 0,
     adherentId: 0,
     adherentFicheFrais: 0,
+    idDocCerfa: 0,
     statut: '',
-    allUser: [],
-    mesNotesDeFrais: [
-      {
-        id: 4,
-        date: '12-06-2021',
-        trajet: 'Paris - Lyon',
-        km: 147,
-        peage: 26,
-        repas: 35.8,
-        hebergement: 80
-      },
-      {
-        id: 5,
-        date: '04-11-2021',
-        trajet: 'Viry Châtillon - Evry',
-        km: 3.6,
-        peage: 0,
-        repas: 35.8,
-        hebergement: 0
-      }
-    ]
+    allUser: []
   },
   mutations: {
     // RECUPERATION DES DONNES GLOBALES DE L'UTILISATEUR CONNECTE
@@ -49,6 +30,11 @@ export default createStore({
     setFicheFraisIdAdherent (state, id) {
       // Initialisation de l'id de l'adhérent connecté
       state.adherentFicheFrais = id
+    },
+    // RECUPERATION DE LA DISPONIBILITE DU BORDEREAU DE L'ADHERENT
+    setIdDocCerfa (state, id) {
+      // Initialisation de la variable
+      state.idDocCerfa = id
     },
     // MODIFICATION DE TOUTES LES DONNEES
     setAllUserData (state, data) {

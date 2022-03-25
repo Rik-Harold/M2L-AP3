@@ -117,14 +117,36 @@
         <p style="margin-top:15px;margin-bottom: 35px;">Signature du Trésorier : </p>
       </div>
     </div>
-    <!-- Bouton de conversion du bordereau en pdf -->
-    <div class="d-flex justify-content-center controls" style="margin-top: 10px;margin-bottom: 10px;">
-      <button id="send_getPDF" class="btn btn-primary" @click="docPDF(this, annee, id)">Télécharger le bordereau</button>
+
+    <!-- Bouton de conversion du bordereau en pdf - CREATION -->
+    <div v-if="disponible == 'indisponible'" class="d-flex justify-content-center controls" style="margin-top: 10px;margin-bottom: 10px;">
+      <button id="send_getPDF" class="btn btn-primary" @click="docPDF(this, annee, id)">Créer et télécharger le bordereau</button>
     </div>
-    <!-- Bouton de retour à l'accueil trésorier -->
+    <!-- Bouton de conversion du bordereau en pdf - MISE A JOUR -->
+    <div v-else class="d-flex justify-content-center controls" style="margin-top: 10px;margin-bottom: 10px;">
+      <button id="send_getPDF" class="btn btn-primary" @click="docPDF(this, annee, id)">Mettre à jour et télécharger le bordereau</button>
+    </div>
+
+    <!-- Gestion du bordereau - TRESORIER -->
     <div v-if="$store.state.statut == 'tresorier'" class="d-flex justify-content-center controls" style="margin-bottom: 50px;">
       <div class='btn btn-info all-ligne-frais-button-user'><span><i class="bi bi-arrow-left-short"></i></span>
+        <!-- Vérification des fiches de frais -->
+        <router-link to="/adherent/bordereau" class="accueil">Voir les fiches de frais</router-link>
+      </div>
+      <div class='btn btn-info all-ligne-frais-button-user ms-2'><span><i class="bi bi-arrow-left-short"></i></span>
+        <!-- Bouton de retour à l'accueil trésorier -->
         <router-link to="/tresorier/les-bordereaux" class="accueil">Revenir à l'accueil</router-link>
+      </div>
+    </div>
+    <!-- Gestion du bordereau - ADMIN -->
+    <div v-else-if="$store.state.statut == 'admin'" class="d-flex justify-content-center controls" style="margin-bottom: 50px;">
+      <div class='btn btn-info all-ligne-frais-button-user'><span><i class="bi bi-arrow-left-short"></i></span>
+        <!-- Vérification des fiches de frais -->
+        <router-link to="/adherent/bordereau" class="accueil">Voir les fiches de frais</router-link>
+      </div>
+      <div class='btn btn-info all-ligne-frais-button-user ms-2'><span><i class="bi bi-arrow-left-short"></i></span>
+        <!-- Bouton de retour à l'accueil admin -->
+        <router-link to="/admin/gestion-utilisateurs" class="accueil">Revenir à l'accueil</router-link>
       </div>
     </div>
     <!-- Bouton de retour à l'accueil adhérent -->
@@ -139,7 +161,7 @@
 <script>
 /* eslint new-cap: ["error", { "newIsCap": false }] */
 // Importation des fonctions de traitement
-import { selectAllFicheFrais, selectDataAdherent, selectMotifs } from '../../services/userService.js'
+import { selectAllFicheFrais, selectDataAdherent, selectMotifs, selectBordereauData, addBordereau, updateBordereau } from '../../services/userService.js'
 import jsPDF from 'jspdf'
 export default {
   name: 'ModelBordereau',
@@ -156,10 +178,19 @@ export default {
       ville: '',
       licence: 0,
       montantTotal: 0,
-      motifs: null
+      motifs: null,
+      disponible: '',
+      bordereauData: {
+        id: 0,
+        src: '',
+        valide: 0,
+        frais: 0
+      }
     }
   },
   beforeMount () {
+    // Récupération des données du bordereau de l'utilisateur
+    this.miseAJourDataBordereau(this)
     // Fonction de récupération des motifs de fiches de frais
     selectMotifs()
       .then(res => res.json())
@@ -221,11 +252,11 @@ export default {
         })
     },
     // Traitement du bordererau en pdf
-    docPDF: (annee, id) => {
+    docPDF: (instance, annee, id) => {
       // Récupération du document à imprimer
       const modeleBordereau = document.getElementById('pdf')
       // Nom du bordereau
-      const pdfName = 'bordereau_' + annee + '_' + id
+      const pdfName = 'bordereau_' + annee + '_' + id + '.pdf'
       // Orienntation du fichier pdf
       const doc = new jsPDF({
         orientation: 'p',
@@ -235,7 +266,42 @@ export default {
       // Sauvegarde du fichier
       doc.html(modeleBordereau, {
         callback: function (doc) {
-          doc.save(pdfName + '.pdf')
+          // Création du bordereau
+          doc.save(pdfName)
+          // Mise à jour de la source du bordereau
+          instance.bordereauData.src = pdfName
+          // Vérification du type d'action à exécuter
+          if (instance.disponible === 'indisponible') {
+            // Création du bordereau
+            addBordereau(instance.bordereauData.src, instance.$store.state.adherentFicheFrais, instance.bordereauData.valide, instance.annee)
+              .then(res => res.json())
+              .then(data => {
+                if (data.message === 'creation') {
+                  // Notification de la création du bordereau
+                  alert('Bordereau créé avec succès !')
+                } else {
+                  // Notification de l'erreur
+                  alert('Erreur lors de la création du bordereau !')
+                }
+              })
+          } else {
+            // Ajout du montant total des frais du bordereau
+            instance.bordereauData.frais = instance.montantTotal
+            // Mise à jour du bordereau
+            updateBordereau(instance.bordereauData)
+              .then(res => res.json())
+              .then(data => {
+                if (data.message === 'update') {
+                  // Notification de la création du bordereau
+                  alert('Bordereau mis à jour avec succès !')
+                } else {
+                  // Notification de l'erreur
+                  alert('Erreur lors de la mise à jour du bordereau !')
+                }
+              })
+          }
+          // Mise à jour des informations
+          instance.miseAJourDataBordereau(instance)
         }
       })
     },
@@ -308,6 +374,24 @@ export default {
       })
       // Mise à disposition du bordereau
       return bordereau
+    },
+    // Fonction de récupération des motifs de fiches de frais
+    miseAJourDataBordereau: (instance) => {
+      selectBordereauData(instance.$store.state.adherentFicheFrais, instance.annee)
+        .then(res => res.json())
+        .then(data => {
+          if (data.statut === 'disponible') {
+            // Détection de la disponibilité du bordereau
+            instance.disponible = data.statut
+            instance.bordereauData.id = data.bordereau[0].id_bordereau
+            instance.bordereauData.src = data.bordereau[0].src_bordereau
+            instance.bordereauData.valide = data.bordereau[0].valide
+            instance.bordereauData.frais = data.bordereau[0].frais
+          } else {
+            // Détection de l'indisponibilité du bordereau
+            instance.disponible = data.statut
+          }
+        })
     }
   }
 }

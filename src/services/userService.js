@@ -190,46 +190,51 @@ async function selectAllBordereau (dateBordereau) {
 }
 
 // Appel de l'API au serveur pour la récupération des données d'une fiche de frais
-async function selectBordereauData (id, idAdherent) {
+async function selectBordereauData (idAdherent, annee) {
   // Requête vers l'api et récupération de la réponse
-  const response = await fetch(`/api/select/bordereau/${idAdherent}/${id}`)
+  const response = await fetch(`/api/select/bordereau-adherent/${idAdherent}/${annee}`)
   // Réponse de l'api à la vue
   return await response
 }
 
 // Appel de l'API au serveur pour la création d'un nouveau bordereau
-async function addBordereau (lsrcBordereau, lidAdherent) {
+async function addBordereau (lsrcBordereau, lidAdherent, lvalide, lannee) {
   // Requête vers l'api et récupération de la réponse
   const response = await fetch('/api/create/bordereau', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       srcBordereau: lsrcBordereau,
-      idAdherent: lidAdherent
+      idAdherent: lidAdherent,
+      valide: lvalide,
+      annee: lannee
     })
   })
   // Réponse de l'api à la vue
   return await response
 }
 
-// Appel de l'API au serveur pour la supression d'un bordereau
-async function deleteBordereau (id, idAdherent) {
-  // Requête vers l'api et récupération de la réponse
-  const response = await fetch(`/api/delete/bordereau/${idAdherent}/${id}`)
-  // Réponse de l'api à la vue
-  return await response
-}
-
 // Appel de l'API au serveur pour la mise à jour d'un bordereau
-async function updateBordereau (lid, lsrcBordereau, lidAdherent) {
+async function updateBordereau (bordereau) {
   // Requête vers l'api et récupération de la réponse
+  // const response = await fetch('/api/update/bordereau', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify({
+  //     id: lid,
+  //     srcBordereau: lsrcBordereau,
+  //     valide: lvalide,
+  //     frais: lfrais
+  //   })
+  // })
   const response = await fetch('/api/update/bordereau', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      id: lid,
-      srcBordereau: lsrcBordereau,
-      idAdherent: lidAdherent
+      id: bordereau.id,
+      srcBordereau: bordereau.src,
+      valide: bordereau.valide,
+      frais: bordereau.frais
     })
   })
   // Réponse de l'api à la vue
@@ -244,16 +249,10 @@ async function selectBordereau () {
   return await response
 } */
 
-// Appel de l'API au serveur pour la mise à jour d'un bordereau
-async function sendDocumentCerfa (data) {
-  console.log('Requête d\'envoi de fichier pdf transformé en text')
-  console.log(data)
-  // Requête vers l'api et récupération de la réponse
-  const response = await fetch('/api/get/bordereau', {
-    method: 'POST',
-    headers: { 'Content-Type': 'arraybuffer' },
-    body: data
-  })
+// Appel de l'API au serveur pour l'ajout du document cerfa
+async function sendDocumentCerfa (lid, lsrcCerfa) {
+  // Envoi de la requête au serveur
+  const response = await fetch(`/api/get/cerfa/${lid}/${lsrcCerfa}`)
   // Réponse de l'api à la vue
   return await response
 }
@@ -272,7 +271,6 @@ module.exports = {
   selectAllBordereau,
   selectBordereauData,
   addBordereau,
-  deleteBordereau,
   updateBordereau,
   selectMotifs,
   selectDataAdherent,

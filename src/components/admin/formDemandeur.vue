@@ -6,9 +6,9 @@
         <!-- Conteneur du formulaire -->
         <div class="container mt-5">
             <!-- Titre du formulaire -->
-            <h1 class="h1 text-center">Création de compte Demandeur</h1>
+            <h1 class="h1 text-center">Création de compte Adhérent</h1>
             <!-- Conteneur des données du formulaire -->
-            <div class="container">
+            <div class="container mb-5">
                 <div class="row">
                     <div class="col-sm-10 offset-sm-1 col-md-6 offset-md-3">
                         <div class="formulaire" id="formDemandeur">

@@ -40,10 +40,19 @@ async function updateUser (lid, lemail, lstatut, ldroitReservation, lniveauTarif
   return await response
 }
 
+// Appel de l'API au serveur pour la supression d'un bordereau
+async function deleteBordereau (id) {
+  // Requête vers l'api et récupération de la réponse
+  const response = await fetch(`/api/delete/bordereau/${id}`)
+  // Réponse de l'api à la vue
+  return await response
+}
+
 // Exportation des modules
 module.exports = {
   selectUserData,
   selectUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  deleteBordereau
 }

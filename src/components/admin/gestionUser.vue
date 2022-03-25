@@ -66,7 +66,7 @@
       </table>
 
       <!-- Création d'un nouvel utilisateur -->
-      <div class="mt-5 container text-center">
+      <div class="my-5 container text-center">
         <router-link class="btn btn-primary" to="/admin/ajouter-utilisateur/0">AJOUTER UN UTILISATEUR</router-link>
       </div>
     </section>
@@ -105,7 +105,6 @@ export default {
       switch (instance.filtre) {
         case 'adherent':
           // Récupération des Adhérents
-          console.log(instance.allUsers[4])
           return instance.allUsers.filter(utilisateur => {
             return utilisateur.statut === 'adherent'
           })

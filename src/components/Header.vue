@@ -52,6 +52,10 @@ export default {
         {
           id: '/admin/modifier-demandeur',
           nom: 'Ajouter un adhérent'
+        },
+        {
+          id: '/tresorier/les-bordereaux',
+          nom: 'Bordereaux adhérents'
         }
       ],
       pagesAdherent: [

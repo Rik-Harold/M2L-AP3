@@ -4,7 +4,7 @@
     <Header />
 
     <!-- Contenu des bordereaux -->
-    <div class="container mt-3">
+    <div class="container mt-5">
       <!-- Titre de la page -->
       <h3 class="text-center">BORDEREAUX DE L'ANNEE {{ annee }}</h3>
 
@@ -22,7 +22,7 @@
           <tr v-for="(bordereau, index) in adherentsFormat(this)" :key="index" >
             <td>{{ index + 1 }}</td>
             <td>{{ bordereau.name }}</td>
-            <td v-if="bordereau.src_bordereau != ''" @click="modifAdherentId(this, bordereau.id)" class="voirBordereau" >
+            <td v-if="bordereau.src_bordereau != ''" @click="modifAdherentId(this, bordereau.adherent, bordereau.id)" class="voirBordereau" >
               Voir le bordereau
             </td>
             <td v-else class="pasDeBordereau">Non disponible</td>
@@ -30,13 +30,14 @@
             <td v-if="bordereau.src_bordereau == ''">
               <button @click="modifAdherentId(this, bordereau.adherent, bordereau.id)" class="ms-1 btn btn-secondary">En attente</button>
             </td>
-            <!-- Document CERFA -->
-            <td v-else-if="bordereau.src_bordereau != '' && bordereau.bordereauValide == 1">
-              <button class="ms-1 btn btn-success">Document CERFA</button>
-            </td>
             <!-- Validation du bordereau -->
-            <td v-else-if="bordereau.src_bordereau != '' && bordereau.bordereauValide == 0">
-              <button class="ms-1 btn btn-primary" @click="documentCerfa(this, bordereau.id)" >Validation</button>
+            <td v-else-if="bordereau.bordereauValide == 0">
+              <button class="ms-1 btn btn-primary" @click="documentCerfa(this, bordereau.adherent, bordereau.bordereauId)" >Validation</button>
+              <button v-if="$store.state.statut == 'admin'" @click="deleteABordereau(this, bordereau.bordereauId)" class="ms-1 btn btn-danger">Supprimer</button>
+            </td>
+            <!-- Document CERFA -->
+            <td v-else-if="bordereau.bordereauValide == 1">
+              <button class="ms-1 btn btn-success">Document CERFA</button>
             </td>
           </tr>
         </tbody>
@@ -49,6 +50,7 @@
 // Importation de la navbarre
 import Header from '@/components/Header.vue'
 import { selectAllBordereau, selectAllAdherentBordereau } from '../../services/userService.js'
+import { deleteBordereau } from '../../services/adminService.js'
 // Traitements
 export default {
   name: 'Allbordereau',
@@ -113,9 +115,10 @@ export default {
       instance.$router.push({ name: 'ModelBordereau' })
     },
     // Redirection vers le document CERFA
-    documentCerfa: (instance, id) => {
+    documentCerfa: (instance, idAdherent, idBordereau) => {
       // Modification de l'utilisateur du bordereau
-      instance.$store.commit('setBordereauIdAdherent', id)
+      instance.$store.commit('setBordereauIdAdherent', idAdherent)
+      instance.$store.commit('setIdDocCerfa', idBordereau)
       // Redirection vers le modèle de documentation cerfa
       instance.$router.push({ name: 'DocumentCerfa' })
     },
@@ -130,11 +133,13 @@ export default {
         // Vérification de la disponibilité du bordereau
         let srcBordereau = ''
         let valide = null
+        let idBordereau = 0
         instance.bordereaux.forEach(bordereau => {
-          if (bordereau.adherent_id === id) {
+          if (bordereau.id_demandeur === id) {
             // Récupération de la valeur de disponibilité des bordereaux
             srcBordereau = bordereau.src_bordereau
             valide = bordereau.valide
+            idBordereau = bordereau.id_bordereau
           }
         })
         // Initialisation des données de l'adhérent
@@ -143,11 +148,29 @@ export default {
           name: adherent.nom + ' ' + adherent.prenom,
           src_bordereau: srcBordereau,
           bordereauValide: valide,
-          adherent: adherent.id_utilisateur
+          adherent: adherent.id_utilisateur,
+          bordereauId: idBordereau
         })
       })
       // Mise à disposition du bordereau formaté
       return adherentsBordereaux
+    },
+    // Suppression du bordereau
+    deleteABordereau: (instance, id) => {
+      // Fonction de récupération des ligues disponibles
+      deleteBordereau(id)
+        .then(res => res.json())
+        .then(data => {
+          // Fonction de récupération des bordereau
+          selectAllBordereau(instance.annee)
+            .then(res => res.json())
+            .then(data => {
+              // Récupération des bordereaux disponibles
+              instance.bordereaux = data
+            })
+          // Notification de la supression
+          alert('Bordereau supprimé !')
+        })
     }
   }
 }
