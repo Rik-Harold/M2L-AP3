@@ -50,7 +50,7 @@
                 <input type="number" class="form-control" v-model.number="nbHebergement" placeholder="Nombre de fois utilisé"/>
               </div>
               <div class="container text-center">
-                <button class="btn btn-primary" @click="sauvegarde(this)" >VALIDER</button>
+                <button class="btn btn-warning" @click="sauvegarde(this)" >VALIDER</button>
               </div>
             </div>
           </div>
@@ -105,7 +105,7 @@
                 <input type="number" class="form-control" v-model.number="nbHebergement" placeholder="Nombre de fois utilisé"/>
               </div>
               <div class="container text-center">
-                <button class="btn btn-primary" @click="miseAJour(this)" >METTRE A JOUR</button>
+                <button class="btn btn-warning" @click="miseAJour(this)" >METTRE A JOUR</button>
               </div>
             </div>
           </div>

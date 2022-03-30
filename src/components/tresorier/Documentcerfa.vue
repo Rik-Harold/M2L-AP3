@@ -85,16 +85,16 @@
 
     <!-- Bouton de conversion du bordereau en pdf -->
     <div class="d-flex justify-content-center controls" style="margin-top: 10px;margin-bottom: 10px;">
-      <button id="send_getPDF_cerfa" class="btn btn-primary" @click="docPDF(this, annee, id)">Télécharger et sauvegarder en PDF</button>
+      <button id="send_getPDF_cerfa" class="btn btn-warning" @click="docPDF(this, annee, id)">Télécharger et sauvegarder en PDF</button>
     </div>
 
     <!-- Retour à l'accueuil -->
     <div class="d-flex justify-content-center controls" style="margin-bottom: 50px;">
-      <div v-if="$store.state.statut == 'tresorier'" class='btn btn-info all-bordereaux-button'><span><i class="bi bi-arrow-left-short"></i></span>
+      <div v-if="$store.state.statut == 'tresorier'" class='btn btn-warning all-bordereaux-button'><span><i class="bi bi-arrow-left-short"></i></span>
         <!-- Bouton de retour à l'accueil - TRESORIER -->
         <router-link to="/tresorier/les-bordereaux" class="accueil">Revenir à l'accueil</router-link>
       </div>
-      <div v-else-if="$store.state.statut == 'admin'" class='btn btn-info all-bordereaux-button'><span><i class="bi bi-arrow-left-short"></i></span>
+      <div v-else-if="$store.state.statut == 'admin'" class='btn btn-warning all-bordereaux-button'><span><i class="bi bi-arrow-left-short"></i></span>
         <!-- Bouton de retour à l'accueil admin -->
         <router-link to="/admin/gestion-utilisateurs" class="accueil">Revenir à l'accueil</router-link>
       </div>
@@ -204,6 +204,5 @@ export default {
 }
 .accueil {
   text-decoration: none;
-  color: #000000;
 }
 </style>

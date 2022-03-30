@@ -51,7 +51,7 @@
               </div>
               <!-- Bouton de sauvegarde des données -->
               <div class="container text-center">
-                <button class="btn btn-success" @click="sauvegarde(this)" >SAUVEGARDER</button>
+                <button class="btn btn-warning" @click="sauvegarde(this)" >SAUVEGARDER</button>
               </div>
             </div>
           </div>
@@ -106,7 +106,7 @@
               </div>
               <!-- Bouton de mise à jour -->
               <div class="container text-center">
-                <button class="btn btn-success" @click="miseAJour(this)" >METTRE A JOUR</button>
+                <button class="btn btn-warning" @click="miseAJour(this)" >METTRE A JOUR</button>
               </div>
             </div>
           </div>

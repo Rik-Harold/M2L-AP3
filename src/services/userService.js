@@ -217,16 +217,6 @@ async function addBordereau (lsrcBordereau, lidAdherent, lvalide, lannee) {
 // Appel de l'API au serveur pour la mise à jour d'un bordereau
 async function updateBordereau (bordereau) {
   // Requête vers l'api et récupération de la réponse
-  // const response = await fetch('/api/update/bordereau', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({
-  //     id: lid,
-  //     srcBordereau: lsrcBordereau,
-  //     valide: lvalide,
-  //     frais: lfrais
-  //   })
-  // })
   const response = await fetch('/api/update/bordereau', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -240,14 +230,6 @@ async function updateBordereau (bordereau) {
   // Réponse de l'api à la vue
   return await response
 }
-/* Appel de l'API au serveur pour la récupération des fiches de frais de l'utilisateur
-async function selectBordereau () {
-  console.log('Requête des lignes de frais du bordereai')
-  // Requête vers l'api et récupération de la réponse
-  const response = await fetch('/api/select/bordereau')
-  // Réponse de l'api à la vue
-  return await response
-} */
 
 // Appel de l'API au serveur pour l'ajout du document cerfa
 async function sendDocumentCerfa (lid, lsrcCerfa) {

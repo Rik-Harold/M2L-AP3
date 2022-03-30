@@ -1,26 +1,17 @@
 <template>
   <div>
-    <!-- Routeur --
-    <router-view v-slot="slot">
-      <transition name="movePage" mode="out-in">
-        <component :is="slot.Component"></component>
-      </transition>
-    </router-view> -->
+    <!-- Routeur -->
     <router-view />
   </div>
 </template>
 
-<style>
+<style lang="scss">
 /* Importation de la police "Roboto" */
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 body
 {
   height: 100%;
   font-family: 'Roboto', sans-serif;
-  /* min-width: 505px; */
-  /* min-width: 992px; */
-  /* background-image: url('https://mdbootstrap.com/img/Photos/Others/images/76.jpg'); */
-  /* background-size: cover; */
   background-repeat: no-repeat;
 }
 /* Animation de passage d'une page à une autre */
@@ -32,5 +23,13 @@ body
 {
   transition: opacity 1s ease-in;
   opacity: 1;
+}
+.btn-warning, .btn-warning:hover, .accueil, .accueil:hover
+{
+  color: rgba($color: #ffffff, $alpha: 0.7);
+}
+h1, h3
+{
+  color: #2b4c88;
 }
 </style>

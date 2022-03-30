@@ -120,38 +120,38 @@
 
     <!-- Bouton de conversion du bordereau en pdf - CREATION -->
     <div v-if="disponible == 'indisponible'" class="d-flex justify-content-center controls" style="margin-top: 10px;margin-bottom: 10px;">
-      <button id="send_getPDF" class="btn btn-primary" @click="docPDF(this, annee, id)">Créer et télécharger le bordereau</button>
+      <button id="send_getPDF" class="btn btn-warning" @click="docPDF(this, annee, id)">Créer et télécharger le bordereau</button>
     </div>
     <!-- Bouton de conversion du bordereau en pdf - MISE A JOUR -->
     <div v-else class="d-flex justify-content-center controls" style="margin-top: 10px;margin-bottom: 10px;">
-      <button id="send_getPDF" class="btn btn-primary" @click="docPDF(this, annee, id)">Mettre à jour et télécharger le bordereau</button>
+      <button id="send_getPDF" class="btn btn-warning" @click="docPDF(this, annee, id)">Mettre à jour et télécharger le bordereau</button>
     </div>
 
     <!-- Gestion du bordereau - TRESORIER -->
     <div v-if="$store.state.statut == 'tresorier'" class="d-flex justify-content-center controls" style="margin-bottom: 50px;">
-      <div class='btn btn-info all-ligne-frais-button-user'><span><i class="bi bi-arrow-left-short"></i></span>
+      <div class='btn btn-warning all-ligne-frais-button-user'><span><i class="bi bi-arrow-left-short"></i></span>
         <!-- Vérification des fiches de frais -->
         <router-link to="/adherent/bordereau" class="accueil">Voir les fiches de frais</router-link>
       </div>
-      <div class='btn btn-info all-ligne-frais-button-user ms-2'><span><i class="bi bi-arrow-left-short"></i></span>
+      <div class='btn btn-warning all-ligne-frais-button-user ms-2'><span><i class="bi bi-arrow-left-short"></i></span>
         <!-- Bouton de retour à l'accueil trésorier -->
         <router-link to="/tresorier/les-bordereaux" class="accueil">Revenir à l'accueil</router-link>
       </div>
     </div>
     <!-- Gestion du bordereau - ADMIN -->
     <div v-else-if="$store.state.statut == 'admin'" class="d-flex justify-content-center controls" style="margin-bottom: 50px;">
-      <div class='btn btn-info all-ligne-frais-button-user'><span><i class="bi bi-arrow-left-short"></i></span>
+      <div class='btn btn-warning all-ligne-frais-button-user'><span><i class="bi bi-arrow-left-short"></i></span>
         <!-- Vérification des fiches de frais -->
         <router-link to="/adherent/bordereau" class="accueil">Voir les fiches de frais</router-link>
       </div>
-      <div class='btn btn-info all-ligne-frais-button-user ms-2'><span><i class="bi bi-arrow-left-short"></i></span>
+      <div class='btn btn-warning all-ligne-frais-button-user ms-2'><span><i class="bi bi-arrow-left-short"></i></span>
         <!-- Bouton de retour à l'accueil admin -->
         <router-link to="/admin/gestion-utilisateurs" class="accueil">Revenir à l'accueil</router-link>
       </div>
     </div>
     <!-- Bouton de retour à l'accueil adhérent -->
     <div v-else class="d-flex justify-content-center controls" style="margin-bottom: 50px;">
-      <div class='btn btn-info all-ligne-frais-button-user'><span><i class="bi bi-arrow-left-short"></i></span>
+      <div class='btn btn-warning all-ligne-frais-button-user'><span><i class="bi bi-arrow-left-short"></i></span>
         <router-link to="/adherent/bordereau" class="accueil">Revenir à l'accueil</router-link>
       </div>
     </div>

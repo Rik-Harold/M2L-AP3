@@ -32,12 +32,12 @@
             </td>
             <!-- Validation du bordereau -->
             <td v-else-if="bordereau.bordereauValide == 0">
-              <button class="ms-1 btn btn-primary" @click="documentCerfa(this, bordereau.adherent, bordereau.bordereauId)" >Validation</button>
-              <button v-if="$store.state.statut == 'admin'" @click="deleteABordereau(this, bordereau.bordereauId)" class="ms-1 btn btn-danger">Supprimer</button>
+              <button class="ms-1 btn btn-secondary" @click="documentCerfa(this, bordereau.adherent, bordereau.bordereauId)" >Validation</button>
+              <button v-if="$store.state.statut == 'admin'" @click="deleteABordereau(this, bordereau.bordereauId)" class="ms-1 btn btn-secondary">Supprimer</button>
             </td>
             <!-- Document CERFA -->
             <td v-else-if="bordereau.bordereauValide == 1">
-              <button class="ms-1 btn btn-success">Document CERFA</button>
+              <button class="ms-1 btn btn-secondary">Document CERFA</button>
             </td>
           </tr>
         </tbody>
@@ -185,7 +185,7 @@ export default {
   color: #ff0000 !important;
 }
 .voirBordereau:hover {
-  background: rgb(102, 207, 76);
+  background: rgb(254,200,22);
   color: #fff;
   cursor: pointer;
   letter-spacing: 1pt;

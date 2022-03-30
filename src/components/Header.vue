@@ -1,8 +1,10 @@
 <template>
   <div id="navbar">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark w-100">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-m2l w-100">
       <div class="container">
+        <!-- Nom de l'organisme -->
         <a class="navbar-brand" href="#">M2L</a>
+        <!-- Bouton responsive -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -25,6 +27,7 @@
               <router-link :to="item.id" class="nav-link">{{ item.nom }}</router-link>
             </li>
           </ul>
+          <!-- Bouton de déconnexion -->
           <div class="h-100 deconnect">
             <router-link to="/" class="deconnexion"><i class="fas fa-sign-out-alt"></i></router-link>
           </div>
@@ -87,18 +90,16 @@ export default {
 #navbar
 {
   margin-bottom: 20px;
-  color: white;
+  color: #e02131;
   padding: 0;
   ul
   {
     li
     {
       padding: 15px;
-      .lien-menu
+      .nav-link
       {
-        text-decoration: none;
-        color: white;
-        margin: 0;
+        font-size: 120%;
       }
     }
   }
@@ -108,8 +109,13 @@ export default {
     .deconnexion
     {
       color: #fff;
+      // color: #2b4c88;
       text-decoration: none;
     }
+  }
+  .bg-m2l
+  {
+    background: rgb(254,200,22);
   }
 }
 </style>

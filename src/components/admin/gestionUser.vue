@@ -59,7 +59,7 @@
               <!-- Modification d'un compte utilisateur -->
               <router-link class="btn btn-secondary" :to="{ name: 'FormUser', params: { idUser: utilisateur.id_utilisateur } }">Modifier</router-link>
               <!-- Suppression d'un compte utilisateur -->
-              <button class="ms-1 btn btn-danger" @click="deleteAnUser(this, utilisateur.id_utilisateur, utilisateur.statut)" >Supprimer</button>
+              <button class="ms-1 btn btn-secondary" @click="deleteAnUser(this, utilisateur.id_utilisateur, utilisateur.statut)" >Supprimer</button>
             </td>
           </tr>
         </tbody>
@@ -67,7 +67,7 @@
 
       <!-- Création d'un nouvel utilisateur -->
       <div class="my-5 container text-center">
-        <router-link class="btn btn-primary" to="/admin/ajouter-utilisateur/0">AJOUTER UN UTILISATEUR</router-link>
+        <router-link class="btn btn-warning" to="/admin/ajouter-utilisateur/0">AJOUTER UN UTILISATEUR</router-link>
       </div>
     </section>
   </div>

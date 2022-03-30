@@ -6,7 +6,7 @@
     <!-- Contenu de la page -->
     <section class="container" >
       <!-- Titre de la page -->
-      <h2 class="mt-5 text-center">MES FICHES DE FRAIS</h2>
+      <h3 class="mt-5 text-center">MES FICHES DE FRAIS</h3>
 
       <!-- Tableau d'affichage des fiches de frais du bordereau courant -->
       <div class="mt-3 conteneur-table">
@@ -51,7 +51,7 @@
                 <!-- Modification d'une fiche de frais -->
                 <router-link class="btn btn-secondary" :to="{ name: 'Fichefrais', params: { idFiche: ficheDeFrais.id } }">Modifier</router-link>
                 <!-- Suppression d'une fiche de frais -->
-                <button class="ms-1 btn btn-danger" @click="deleteFiche(this, ficheDeFrais.id)">Supprimer</button>
+                <button class="ms-1 btn btn-secondary" @click="deleteFiche(this, ficheDeFrais.id)">Supprimer</button>
               </td>
             </tr>
           </tbody>
@@ -60,11 +60,11 @@
 
       <!-- Ajout d'une nouvelle fiche de frais -->
       <div v-if="$store.state.statut == 'adherent'" class="mt-5 container text-center">
-        <router-link class="btn btn-primary" to="/adherent/fiche-de-frais/0">AJOUTER UNE NOTE DE FRAIS</router-link>
+        <router-link class="btn btn-warning" to="/adherent/fiche-de-frais/0">AJOUTER UNE NOTE DE FRAIS</router-link>
       </div>
       <!-- Consulter le bordereau -->
       <div v-else-if="$store.state.statut == 'tresorier' || $store.state.statut == 'admin'" class="mt-5 container text-center">
-        <router-link class="btn btn-primary" to="/adherent/mon-bordereau">CONSULTER LE BORDEREAU</router-link>
+        <router-link class="btn btn-warning" to="/adherent/mon-bordereau">CONSULTER LE BORDEREAU</router-link>
       </div>
     </section>
   </div>
