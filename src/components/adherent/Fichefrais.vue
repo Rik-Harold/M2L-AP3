@@ -190,7 +190,7 @@ export default {
   },
   methods: {
     sauvegarde: (instance) => {
-      // Requête de création
+      // Requête de création d'une fiche de frais
       addFicheFrais(instance.trajet, instance.dateFrais, instance.km, instance.nbKm, instance.peage, instance.nbPeage, instance.peageJustificatif, instance.repas, instance.nbRepas, instance.hebergement, instance.nbHebergement, instance.hebergementJustificatif, instance.idMotif, instance.$store.state.adherentFicheFrais)
         .then(res => res.json())
         .then(data => {
@@ -207,6 +207,7 @@ export default {
         })
     },
     miseAJour: (instance) => {
+      // Requête de mise à jour d'une fiche de frais
       updateFicheFrais(instance.id, instance.trajet, instance.dateFrais, instance.km, instance.nbKm, instance.peage, instance.nbPeage, instance.peageJustificatif, instance.repas, instance.nbRepas, instance.hebergement, instance.nbHebergement, instance.hebergementJustificatif, instance.idMotif, instance.$store.state.adherentFicheFrais)
         .then(res => res.json())
         .then(data => {
@@ -222,6 +223,7 @@ export default {
           }
         })
     },
+    // Formatage de la date de la fiche de frais
     formatDate: (dateLigneFrais) => {
       // Récupération de la date de la ligne de frais
       const dateObject = new Date(dateLigneFrais)

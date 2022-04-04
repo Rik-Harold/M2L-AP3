@@ -52,7 +52,7 @@ async function createUser (lemail, lmdp, lstatut, ldroitReservation, lniveauTari
 }
 
 // Appel de l'API au serveur pour la création d'un nouvel adhérent
-async function createDemandeur (lnom, lprenom, lemail, lmdp, lnumLicence, lrue, lcp, lville, ldateNaissance, lidUser, lidLigue, lestAdherent, ldroitReservation, lniveauTarif) {
+async function createDemandeur (lnom, lprenom, lemail, lmdp, lnumLicence, lrue, lcp, lville, ldateNaissance, lidLigue, lestAdherent, ldroitReservation, lniveauTarif) {
   // Requête vers l'api et récupération de la réponse
   const response = await fetch('/api/create/demandeur', {
     method: 'POST',
@@ -67,7 +67,6 @@ async function createDemandeur (lnom, lprenom, lemail, lmdp, lnumLicence, lrue, 
       cp: lcp,
       ville: lville,
       dateNaissance: ldateNaissance,
-      idUser: lidUser,
       idLigue: lidLigue,
       estAdherent: lestAdherent,
       droitReservation: ldroitReservation,

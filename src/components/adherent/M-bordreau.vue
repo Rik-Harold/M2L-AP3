@@ -1,120 +1,125 @@
 <template>
   <div id="m-bordereau">
+    <!-- Barre de navigation adhérent -->
+    <Header />
+
     <!-- CONTRENU DU BORDEREAU A IMPRIMER -->
-    <div id="pdf" class="pdf" style="background-color:white;color:black;text-align: left;margin:20px 20px;">
-      <!-- Logo de la M2L -->
-      <div style="width:50%;margin-bottom: 40px;">
-        <img src="../../assets/img/head_bordereau.jpg" alt="head of bordereau" style="width:100%;">
-      </div>
-      <!-- Titre du bordereau -->
-      <div style="text-align: left; display: inline-block;margin-bottom: 20px;">
-          <h4 style="font-size: 14pt;font-weight: bold;">Note de frais des bénévoles</h4>
-      </div>
-
-      <!-- Identité du bénévole -->
-      <div style="width:30%; float:right;background-color: #CCFFCC;margin-right: 10%;text-align: center;margin-bottom: 20px;padding: 10px 0px;">
-        <h4 style="font-size: 14pt;font-weight: bold;">Année civile {{ annee }}</h4>
-      </div>
-      <div style="width:100%;margin-bottom: 40px;">
-        <p style="font-weight: bold;">Je soussigné (e) </p>
-        <p style="background-color: #CCFFCC;text-align: center;margin-right: 10%;padding: 10px 0px;">{{ nom + ' ' + prenom }}</p>
-        <p style="font-weight: bold;">demeurant</p>
-        <p style="background-color: #CCFFCC;text-align: center;margin-right: 10%;padding: 10px 0px;">{{ rue }}, {{ cp }} - {{ ville }}</p>
-        <p style="font-weight: bold;">certifie renoncer au remboursement des frais ci-dessous et les laisser à l'association</p>
-        <p style="background-color: #CCFFCC;text-align: center;margin-right: 10%;padding: 10px 0px;">Salle d'Armes de Villers lès Nancy, 1 rue Rodin - 54600 Villers lès Nancy</p>
-        <p style="font-weight: bold;">en tant que don.</p>
-      </div>
-
-      <!-- Mention des frais de déplacement -->
-      <div style="text-align: left; display: inline-block;">
-        <p style="font-weight: bold;">Frais de déplacement</p>
-      </div>
-      <!-- Tarif kilométrique -->
-      <div style="width:60%; float:right;text-align: center;">
-        <p>Tarif kilométrique appliqué pour le remboursement : 0,28 €</p>
-      </div>
-
-      <!-- Tableau d'affichage du bordereau -->
-      <table style="width:100%;border-collapse: collapse;border: 1px solid black;text-align: center;color: black;margin-bottom: 30px;">
-        <thead>
-          <tr>
-            <th width="10%" >Date jj/mm/aaaa</th>
-            <th width="15%" >Motif</th>
-            <th width="15%" >Trajet</th>
-            <th width="10%" >Kms parcourus</th>
-            <th width="10%" >Coût Trajet</th>
-            <th width="10%" >Péages</th>
-            <th width="10%" >Repas</th>
-            <th width="10%" >Hébergement</th>
-            <th width="10%" >Total</th>
-          </tr>
-        </thead>
-        <tbody style="background-color: #CCFFCC;">
-          <tr v-for="(ficheDeFrais, index) in bordereauFormat" :key="index" style="padding-top: 15px;padding-bottom: 15px;">
-            <td id="libelle">{{ ficheDeFrais.dateFicheFrais }}</td>
-            <td>{{ ficheDeFrais.motif }}</td>
-            <td>{{ ficheDeFrais.trajet }}</td>
-            <td>{{ ficheDeFrais.kmParcouru }} km</td>
-            <td>
-              {{ ficheDeFrais.coutTrajet }}
-              <span v-if="ficheDeFrais.coutTrajet != '-'"> &euro;</span>
-            </td>
-            <td>
-              {{ ficheDeFrais.coutPeage }}
-              <span v-if="ficheDeFrais.coutPeage != '-'"> &euro;</span>
-            </td>
-            <td>
-              {{ ficheDeFrais.coutRepas }}
-              <span v-if="ficheDeFrais.coutRepas != '-'"> &euro;</span>
-            </td>
-            <td>{{ ficheDeFrais.coutHebergement }}
-              <span v-if="ficheDeFrais.coutHebergement != '-'"> &euro;</span>
-            </td>
-            <td>{{ ficheDeFrais.total }} &euro;</td>
-          </tr>
-          <tr>
-            <td>{{ montantTotal }} &euro;</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Représentant légal -->
-      <div style="width:100%;">
-        <p style="font-weight: bold;">Je suis le représentant légal des adhérents suivants :</p>
-        <div style="background-color: #CCFFCC;text-align: center;margin-right: 10%;">
-          <!-- Nom et numéro de licence de l'adhérent -->
-          <p>{{ nom + '  ' + prenom }}, licence n° {{ licence }} </p>
+    <div id="positionPdf" class="d-flex justify-content-center controls">
+      <div id="pdf" class="pdf" style="background-color:white;color:black;text-align: left;margin:20px 20px;">
+        <!-- Logo de la M2L -->
+        <div style="width:50%;margin-bottom: 40px;">
+          <img src="../../assets/img/head_bordereau.jpg" alt="head of bordereau" style="width:100%;">
         </div>
-      </div>
-      <!-- Montant total des frais du bordereau -->
-      <div style="width:100%;margin-top: 20px;margin-bottom: 30px;">
-        <p style="font-weight: bold;">Montant total des dons<span style="margin-left:60px;background-color:#CCFFFF;text-align:center;padding:0px 40px;font-weight: normal;">{{ montantTotal }} &euro;</span></p>
-      </div>
-      <!-- Note de justificatifs -->
-      <div style="width:100%;text-align: center;font-style:italic;">
-        <p>Pour bénéficier du reçu de dons, cette note de frais doit être accompagnée de tous les justificatifs correspondants.</p>
-      </div>
-      <!-- Date de signature -->
-      <div style="width:100%;padding: 20px 30px;font-style:italic;margin-left: 30%;margin-top: 10px;margin-bottom: 10px;">
-        <p>A<span style="background-color:#CCFFCC;margin:0px 20px;padding:10px 60px">{{ ville }}</span>Le<span style="background-color:#CCFFCC;margin:0px 20px;padding:10px 60px">{{ new Date().toLocaleDateString() }}</span></p>
-      </div>
-      <!-- Signature de l'adhérent -->
-      <div style="width:100%;padding: 20px 30px;font-style:italic;margin-left: 25%;margin-top: 10px;margin-bottom: 30px;">
-        <p>Signature du bénévole<span style="background-color:#CCFFCC;margin:0px 30px;padding:30px 150px">[signé]</span></p>
-      </div>
-      <!-- Section réservée au trésorier modifiable -->
-      <div v-if="$store.state.statut == 'tresorier'" style="border: 1px solid black;background-color:#FF8BD8;width: 55%;margin-bottom: 50px;">
-        <p style="text-align: center;font-weight: bold;">Partie réservée à l'association</p>
-        <p style="margin:15px 0px;">N° d'ordre du Reçu :<span id="num_ordre" style="margin-left: 170px;"></span></p>
-        <p style="margin:15px 0px;">Remis le :<input style="width:200px;text-align: center;border: none; border-bottom: dotted black 1px;margin-left: 150px;background-color:#FF8BD8;" type="text" :value="new Date().toLocaleDateString()"/></p>
-        <p style="margin-top:15px;margin-bottom: 35px;">Signature du Trésorier : <input style="width:300px;text-align: center;border: none; border-bottom: dotted black 1px;margin-left: 50px;background-color:#FF8BD8;" type="text" placeholder="[Saisir votre nom complet ici]"/></p>
-      </div>
-      <!-- Section réservée au trésorier non-modifiable -->
-      <div v-else style="border: 1px solid black;background-color:#FF8BD8;width: 55%;margin-bottom: 50px;">
-        <p style="text-align: center;font-weight: bold;">Partie réservée à l'association</p>
-        <p style="margin:15px 0px;">N° d'ordre du Reçu :<span id="num_ordre" style="margin-left: 80px;"></span></p>
-        <p style="margin:15px 0px;">Remis le :</p>
-        <p style="margin-top:15px;margin-bottom: 35px;">Signature du Trésorier : </p>
+        <!-- Titre du bordereau -->
+        <div style="text-align: left; display: inline-block;margin-bottom: 20px;">
+            <h4 style="font-size: 14pt;font-weight: bold;">Note de frais des bénévoles</h4>
+        </div>
+
+        <!-- Identité du bénévole -->
+        <div style="width:30%; float:right;background-color: #CCFFCC;margin-right: 10%;text-align: center;margin-bottom: 20px;padding: 10px 0px;">
+          <h4 style="font-size: 14pt;font-weight: bold;">Année civile {{ annee }}</h4>
+        </div>
+        <div style="width:100%;margin-bottom: 40px;">
+          <p style="font-weight: bold;">Je soussigné (e) </p>
+          <p style="background-color: #CCFFCC;text-align: center;margin-right: 10%;padding: 10px 0px;">{{ nom + ' ' + prenom }}</p>
+          <p style="font-weight: bold;">demeurant</p>
+          <p style="background-color: #CCFFCC;text-align: center;margin-right: 10%;padding: 10px 0px;">{{ rue }}, {{ cp }} - {{ ville }}</p>
+          <p style="font-weight: bold;">certifie renoncer au remboursement des frais ci-dessous et les laisser à l'association</p>
+          <p style="background-color: #CCFFCC;text-align: center;margin-right: 10%;padding: 10px 0px;">Salle d'Armes de Villers lès Nancy, 1 rue Rodin - 54600 Villers lès Nancy</p>
+          <p style="font-weight: bold;">en tant que don.</p>
+        </div>
+
+        <!-- Mention des frais de déplacement -->
+        <div style="text-align: left; display: inline-block;">
+          <p style="font-weight: bold;">Frais de déplacement</p>
+        </div>
+        <!-- Tarif kilométrique -->
+        <div style="width:60%; float:right;text-align: center;">
+          <p>Tarif kilométrique appliqué pour le remboursement : 0,28 €</p>
+        </div>
+
+        <!-- Tableau d'affichage du bordereau -->
+        <table style="width:100%;border-collapse: collapse;border: 1px solid black;text-align: center;color: black;margin-bottom: 30px;">
+          <thead>
+            <tr>
+              <th width="10%" >Date jj/mm/aaaa</th>
+              <th width="15%" >Motif</th>
+              <th width="15%" >Trajet</th>
+              <th width="10%" >Kms parcourus</th>
+              <th width="10%" >Coût Trajet</th>
+              <th width="10%" >Péages</th>
+              <th width="10%" >Repas</th>
+              <th width="10%" >Hébergement</th>
+              <th width="10%" >Total</th>
+            </tr>
+          </thead>
+          <tbody style="background-color: #CCFFCC;">
+            <tr v-for="(ficheDeFrais, index) in bordereauFormat" :key="index" style="padding-top: 15px;padding-bottom: 15px;">
+              <td id="libelle">{{ ficheDeFrais.dateFicheFrais }}</td>
+              <td>{{ ficheDeFrais.motif }}</td>
+              <td>{{ ficheDeFrais.trajet }}</td>
+              <td>{{ ficheDeFrais.kmParcouru }} km</td>
+              <td>
+                {{ ficheDeFrais.coutTrajet }}
+                <span v-if="ficheDeFrais.coutTrajet != '-'"> &euro;</span>
+              </td>
+              <td>
+                {{ ficheDeFrais.coutPeage }}
+                <span v-if="ficheDeFrais.coutPeage != '-'"> &euro;</span>
+              </td>
+              <td>
+                {{ ficheDeFrais.coutRepas }}
+                <span v-if="ficheDeFrais.coutRepas != '-'"> &euro;</span>
+              </td>
+              <td>{{ ficheDeFrais.coutHebergement }}
+                <span v-if="ficheDeFrais.coutHebergement != '-'"> &euro;</span>
+              </td>
+              <td>{{ ficheDeFrais.total }} &euro;</td>
+            </tr>
+            <tr>
+              <td>{{ montantTotal }} &euro;</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Représentant légal -->
+        <div style="width:100%;">
+          <p style="font-weight: bold;">Je suis le représentant légal des adhérents suivants :</p>
+          <div style="background-color: #CCFFCC;text-align: center;margin-right: 10%;">
+            <!-- Nom et numéro de licence de l'adhérent -->
+            <p>{{ nom + '  ' + prenom }}, licence n° {{ licence }} </p>
+          </div>
+        </div>
+        <!-- Montant total des frais du bordereau -->
+        <div style="width:100%;margin-top: 20px;margin-bottom: 30px;">
+          <p style="font-weight: bold;">Montant total des dons<span style="margin-left:60px;background-color:#CCFFFF;text-align:center;padding:0px 40px;font-weight: normal;">{{ montantTotal }} &euro;</span></p>
+        </div>
+        <!-- Note de justificatifs -->
+        <div style="width:100%;text-align: center;font-style:italic;">
+          <p>Pour bénéficier du reçu de dons, cette note de frais doit être accompagnée de tous les justificatifs correspondants.</p>
+        </div>
+        <!-- Date de signature -->
+        <div style="width:100%;padding: 20px 30px;font-style:italic;margin-left: 30%;margin-top: 10px;margin-bottom: 10px;">
+          <p>A<span style="background-color:#CCFFCC;margin:0px 20px;padding:10px 60px">{{ ville }}</span>Le<span style="background-color:#CCFFCC;margin:0px 20px;padding:10px 60px">{{ new Date().toLocaleDateString() }}</span></p>
+        </div>
+        <!-- Signature de l'adhérent -->
+        <div style="width:100%;padding: 20px 30px;font-style:italic;margin-left: 25%;margin-top: 10px;margin-bottom: 30px;">
+          <p>Signature du bénévole<span style="background-color:#CCFFCC;margin:0px 30px;padding:30px 150px">[signé]</span></p>
+        </div>
+        <!-- Section réservée au trésorier modifiable -->
+        <div v-if="$store.state.statut == 'tresorier'" style="border: 1px solid black;background-color:#FF8BD8;width: 55%;margin-bottom: 50px;">
+          <p style="text-align: center;font-weight: bold;">Partie réservée à l'association</p>
+          <p style="margin:15px 0px;">N° d'ordre du Reçu :<span id="num_ordre" style="margin-left: 170px;"></span></p>
+          <p style="margin:15px 0px;">Remis le :<input style="width:200px;text-align: center;border: none; border-bottom: dotted black 1px;margin-left: 150px;background-color:#FF8BD8;" type="text" :value="new Date().toLocaleDateString()"/></p>
+          <p style="margin-top:15px;margin-bottom: 35px;">Signature du Trésorier : <input style="width:300px;text-align: center;border: none; border-bottom: dotted black 1px;margin-left: 50px;background-color:#FF8BD8;" type="text" placeholder="[Saisir votre nom complet ici]"/></p>
+        </div>
+        <!-- Section réservée au trésorier non-modifiable -->
+        <div v-else style="border: 1px solid black;background-color:#FF8BD8;width: 55%;margin-bottom: 50px;">
+          <p style="text-align: center;font-weight: bold;">Partie réservée à l'association</p>
+          <p style="margin:15px 0px;">N° d'ordre du Reçu :<span id="num_ordre" style="margin-left: 80px;"></span></p>
+          <p style="margin:15px 0px;">Remis le :</p>
+          <p style="margin-top:15px;margin-bottom: 35px;">Signature du Trésorier : </p>
+        </div>
       </div>
     </div>
 
@@ -160,11 +165,16 @@
 
 <script>
 /* eslint new-cap: ["error", { "newIsCap": false }] */
+// Importation des vues
+import Header from '@/components/Header.vue'
 // Importation des fonctions de traitement
 import { selectAllFicheFrais, selectDataAdherent, selectMotifs, selectBordereauData, addBordereau, updateBordereau } from '../../services/userService.js'
 import jsPDF from 'jspdf'
 export default {
   name: 'ModelBordereau',
+  components: {
+    Header
+  },
   data () {
     return {
       annee: 2022,
@@ -261,10 +271,11 @@ export default {
       const doc = new jsPDF({
         orientation: 'p',
         unit: 'px',
-        format: [1600, 1230]
+        format: [1600, 1270]
       })
       // Sauvegarde du fichier
       doc.html(modeleBordereau, {
+        margin: 20,
         callback: function (doc) {
           // Création du bordereau
           doc.save(pdfName)
@@ -398,7 +409,7 @@ export default {
 </script>
 
 <style>
-#m-bordereau {
+#pdf {
   max-width: 1200px;
 }
 .accueil {

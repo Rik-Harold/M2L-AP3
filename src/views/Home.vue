@@ -121,7 +121,7 @@
                       <!-- Bouton de redirection vers la vue correspondante -->
                       <button
                         class="btn btn-warning w-100"
-                        @click="connexion(email, mdp, instance)"
+                        @click="connexion(email, mdp, this)"
                       >Se connecter</button>
                       <!-- Zone du mot de passe oublié -->
                       <div class="mdpForget">
@@ -216,12 +216,11 @@ export default {
   data: () => {
     return {
       email: '',
-      mdp: '',
-      instance: null
+      mdp: ''
     }
   },
   mounted () {
-    this.instance = this
+    this.initialisation(this)
   },
   methods: {
     // FONCTION DE VERIFICATION DE CONNEXION
@@ -268,9 +267,20 @@ export default {
             alert('Email ou mot de passe incorrect !')
           } else {
             // Redirection vers le formulaire d'inscription du demandeur
-            instance.$router.push({ name: 'Form' })
+            instance.$router.push({ name: 'FormDemandeur' })
           }
         })
+    },
+    // Réinitialisation de tous les attributs
+    initialisation: (instance) => {
+      instance.$store.commit('setDataUserConnect', {
+        id: 0,
+        statut: ''
+      })
+      // instance.$store.commit('setFicheFraisIdAdherent', data.adherentIdFicheFrais)
+      // instance.$store.commit('setFicheFraisIdAdherent', data.adherentIdFicheFrais)
+      // instance.$store.commit('setFicheFraisIdAdherent', data.adherentIdFicheFrais)
+      // instance.$store.commit('setFicheFraisIdAdherent', data.adherentIdFicheFrais)
     }
   }
 }

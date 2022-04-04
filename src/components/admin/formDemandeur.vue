@@ -14,15 +14,15 @@
                         <div class="formulaire" id="formDemandeur">
                             <div class="form-group mb-3">
                                 <label class="form-label" id="nom">Nom :</label>
-                                <input type="text" name="nom" class="form-control" v-model="nom" placeholder="Votre nom" />
+                                <input type="text" name="nom" class="form-control" v-model="nom" placeholder="Votre nom" required />
                             </div>
                             <div class="form-group mb-3">
                                 <label class="form-label" id="prenom">Prénom :</label>
-                                <input type="text" name="prenom" class="form-control" v-model="prenom" placeholder="Votre prénom"/>
+                                <input type="text" name="prenom" class="form-control" v-model="prenom" placeholder="Votre prénom" required />
                             </div>
                             <div class="form-group mb-3">
                                 <label class="form-label" id="mdp">Mot de passe :</label>
-                                <input type="password" name="mdp" class="form-control" v-model="mdp" placeholder="Votre mot de passe"/>
+                                <input type="password" name="mdp" class="form-control" v-model="mdp" placeholder="Votre mot de passe" required />
                             </div>
                             <div class="form-group mb-3">
                                 <label class="form-label" id="dateNaissance">Date de naissance :</label>
@@ -30,9 +30,9 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label class="form-label" id="email">Adresse électronique :</label>
-                                <input type="email" name="email" class="form-control" v-model="email" placeholder="xxxx@email.com"/>
+                                <input type="email" name="email" class="form-control" v-model="email" placeholder="xxxx@email.com" required />
                             </div>
-                            <div class="form-group mb-3">
+                            <div v-if="$store.state.statut === 'admin'" class="form-group mb-3">
                                 <label class="form-label" id="cp">Niveau tarif :</label>
                                 <select name="niveauTarif" class="form-control" v-model.number="niveau_tarif">
                                     <option value="1">Ecoles et lycées</option>
@@ -41,7 +41,7 @@
                                     <option value="4">Particuliers</option>
                                 </select>
                             </div>
-                            <div class="form-group mb-3">
+                            <div v-if="$store.state.statut === 'admin'" class="form-group mb-3">
                                 <label class="form-label" id="droitReservation">Droit de réservation :</label>
                                 <div>
                                     <div class="form-check">
@@ -56,19 +56,19 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label class="form-label" id="rue">Rue :</label>
-                                <input type="text" name="rue" class="form-control" v-model="rue" placeholder="Votre rue"/>
+                                <input type="text" name="rue" class="form-control" v-model="rue" placeholder="Votre rue" required />
                             </div>
                             <div class="form-group mb-3">
                                 <label class="form-label" id="cp">Code Postal :</label>
-                                <input type="number" name="cp" class="form-control" v-model.number="cp" placeholder="eg: 75000"/>
+                                <input type="number" name="cp" class="form-control" v-model.number="cp" placeholder="eg: 75000" required />
                             </div>
                             <div class="form-group mb-3">
                                 <label class="form-label" id="ville">Ville :</label>
-                                <input type="text" name="ville" class="form-control" v-model="ville" placeholder="Votre ville"/>
+                                <input type="text" name="ville" class="form-control" v-model="ville" placeholder="Votre ville" required />
                             </div>
                             <div class="form-group mb-3">
                                 <label class="form-label" id="numLicence">Numéro de licence :</label>
-                                <input type="number" name="numLicence" class="form-control" v-model.number="numLicence" placeholder="Entrez le numéro de votre licence"/>
+                                <input type="number" name="numLicence" class="form-control" v-model.number="numLicence" placeholder="Entrez le numéro de votre licence" required />
                             </div>
                             <div class="form-group mb-3">
                                 <label class="form-label" id="cp">Ligues :</label>
@@ -76,7 +76,7 @@
                                     <option v-for="(ligue, index) in ligues" :key="index" :value="ligue.id_ligues"> {{ ligue.nom }} </option>
                                 </select>
                             </div>
-                            <div class="form-group mb-3">
+                            <div v-if="$store.state.statut === 'admin'" class="form-group mb-3">
                                 <label class="form-label" id="estAdherent">Est adhérent ?</label>
                                 <div>
                                     <div class="form-check">
@@ -141,29 +141,59 @@ export default {
       })
   },
   methods: {
-    // Test de vérification des variables
-    test: (instance) => {
-      console.log(instance.dateNaissance)
-      console.log(typeof (instance.dateNaissance))
-      console.log(new Date(instance.dateNaissance))
-    },
     // Fonction de création/mise à jour de compte adhérent
     sauvegarde: (instance) => {
-      // Requête de création
-      createDemandeur(instance.nom, instance.prenom, instance.email, instance.mdp, instance.numLicence, instance.rue, instance.cp, instance.ville, instance.dateNaissance, instance.id_user, instance.id_ligue, instance.estAdherent, instance.droit_reservation, instance.niveau_tarif)
-        .then(res => res.json())
-        .then(data => {
-          // Vérification de la création
-          if (data.message === 'inscription') {
-            // Notification de création
-            alert('Nouvel adhérent créé avec succès !')
-            // Redirection vers l'interface d'affichage des utilisateurs
-            instance.$router.push({ name: 'GestionUser' })
-          } else {
-            // Notification de l'erreur
-            alert('Erreur lors de l\'inscription !')
-          }
-        })
+      if (instance.verif(instance)) {
+        if (instance.$store.state.statut === 'admin') {
+          // Requête de création d'adhérent ou de demandeur
+          createDemandeur(instance.nom, instance.prenom, instance.email, instance.mdp, instance.numLicence, instance.rue, instance.cp, instance.ville, instance.dateNaissance, instance.id_ligue, instance.estAdherent, instance.droit_reservation, instance.niveau_tarif)
+            .then(res => res.json())
+            .then(data => {
+              // Vérification de la création
+              if (data.message === 'inscription') {
+                // Notification de création
+                alert('Nouvel adhérent créé avec succès !')
+                // Redirection vers l'interface d'affichage des utilisateurs
+                instance.$router.push({ name: 'GestionUser' })
+              } else {
+                // Notification de l'erreur
+                alert('Erreur lors de l\'inscription !')
+              }
+            })
+        } else {
+          // Requête de création de demandeur
+          createDemandeur(instance.nom, instance.prenom, instance.email, instance.mdp, instance.numLicence, instance.rue, instance.cp, instance.ville, instance.dateNaissance, instance.id_ligue, 0, 0, 3)
+            .then(res => res.json())
+            .then(data => {
+              // Vérification de la création
+              if (data.message === 'inscription') {
+                // Notification de création
+                alert('Votre demande d\'adhésion est en cours de traitement.')
+                // Redirection vers l'accueil
+                instance.$router.push({ name: 'Home' })
+              } else {
+                // Notification de l'erreur
+                alert('Erreur lors de l\'inscription !')
+              }
+            })
+        }
+      } else {
+        alert('Tous les champs doivent être remplis !')
+      }
+    },
+    // Vérification des champs
+    verif: (instance) => {
+      // Variable de vérification
+      let test = true
+      const donnees = [instance.nom, instance.prenom, instance.email, instance.mdp, instance.numLicence, instance.rue, instance.cp, instance.ville, instance.dateNaissance, instance.id_ligue]
+      // Parcours des données
+      donnees.forEach(donnee => {
+        if (donnee === null || donnee === '' || donnee === 0) {
+          test = false
+        }
+      })
+      // Mise à disposition du test
+      return test
     }
   }
 }

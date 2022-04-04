@@ -3,7 +3,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-m2l w-100">
       <div class="container">
         <!-- Nom de l'organisme -->
-        <a class="navbar-brand" href="#">M2L</a>
+        <a class="navbar-brand" href="#"><img src="../assets/img/M2L_net_rond.png" /><span>M2L</span></a>
         <!-- Bouton responsive -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -22,9 +22,18 @@
             </li>
           </ul>
           <!-- Liste des liens de navigation : TRESORIER -->
-          <ul class="navbar-nav"  v-else-if="$store.state.statut === 'tresorier'">
+          <ul class="navbar-nav" v-else-if="$store.state.statut === 'tresorier'">
             <li class="nav-item" v-for="(item, index) in pagesTresorier" :key="index">
               <router-link :to="item.id" class="nav-link">{{ item.nom }}</router-link>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">Récapîtulatif des bordereaux</a>
+            </li>
+          </ul>
+          <!-- Liste des liens de navigation : DEMANDEUR -->
+          <ul class="navbar-nav" v-else>
+            <li class="nav-item">
+              <a href="#" class="nav-link">Maison des Ligues de Lorraine</a>
             </li>
           </ul>
           <!-- Bouton de déconnexion -->
@@ -111,6 +120,19 @@ export default {
       color: #fff;
       // color: #2b4c88;
       text-decoration: none;
+    }
+  }
+  .navbar-brand
+  {
+    color: #2b4c88;
+    font-weight: 600;
+    img
+    {
+      height: 50px;
+    }
+    span
+    {
+      margin-left: 5px;
     }
   }
   .bg-m2l

@@ -71,7 +71,7 @@
 </template>
 
 <script>
-// Importation des vues selectBordereauData
+// Importation des vues
 import Header from '@/components/Header.vue'
 import { selectAllFicheFrais, deleteFicheFrais, selectMotifs } from '../../services/userService.js'
 // Traitement du script
@@ -112,9 +112,7 @@ export default {
     this.idUser = this.$store.state.idUser
   },
   methods: {
-    test: id => {
-      console.log(id)
-    },
+    // Supression d'une fiche de frais
     deleteFiche: (instance, id, userId) => {
       // Fonction de récupération des ligues disponibles
       deleteFicheFrais(id)
@@ -127,6 +125,7 @@ export default {
           alert('Fiche de l\'id ' + id + ' supprimée !')
         })
     },
+    // Mise à jour de la liste des fiches de frais
     miseAJour: (instance) => {
       selectAllFicheFrais(instance.$store.state.adherentFicheFrais, 2022)
         .then(res => res.json())
@@ -138,6 +137,7 @@ export default {
           instance.bordereauFormat = instance.bordereauFormate(instance)
         })
     },
+    // Formatage de la date de chaque fiche de frais
     formatDate: (instance, dateLigneFrais) => {
       // Récupération de la date de la ligne de frais
       const dateObject = new Date(dateLigneFrais)
