@@ -192,3 +192,4 @@ export default {
   transition: all .5s ease;
 }
 </style>
+
